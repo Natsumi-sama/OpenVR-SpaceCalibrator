@@ -371,7 +371,7 @@ void StartCalibration()
 
 void SetReferenceOffset() {
 	auto &ctx = CalCtx;
-	Pose pose(ctx.devicePoses[ctx.referenceID].mDeviceToAbsoluteTracking);
+	Pose pose(ctx.devicePoses[ctx.targetID].mDeviceToAbsoluteTracking);
 	ReferencePose = pose;
 	ReferenceTranslation = ctx.calibratedTranslation;
 	ReferenceRotation = ctx.calibratedRotation;
@@ -415,9 +415,9 @@ void CalibrationTick(double time)
 
 	if (ctx.state == CalibrationState::Referencing)
 	{
-		Pose pose(ctx.devicePoses[ctx.referenceID].mDeviceToAbsoluteTracking);
+		Pose pose(ctx.devicePoses[ctx.targetID].mDeviceToAbsoluteTracking);
 		Eigen::Vector3d deltaTrans = pose.trans - ReferencePose.trans;
-		ctx.calibratedTranslation = (ReferenceTranslation + (deltaTrans * 100));
+		ctx.calibratedTranslation = (ReferenceTranslation + (deltaTrans * 30));
 
 		// Attempt # 1, getting teh euler delta and adding it to the original reference rotation - does not work.
 		//auto rotation = pose.rot.eulerAngles(2, 1, 0) * 180.0 / EIGEN_PI;
@@ -445,9 +445,9 @@ void CalibrationTick(double time)
 		// Eigen::Matrix3d updatedRot = currentQuat.toRotationMatrix() + deltaRot;
 
 
-		ctx.wantedUpdateInterval = 0.025;
+		ctx.wantedUpdateInterval = 0.01;
 
-		if ((time - ctx.timeLastScan) >= 0.025)
+		if ((time - ctx.timeLastScan) >= 0.01)
 		{
 			ScanAndApplyProfile(ctx);
 			ctx.timeLastScan = time;
