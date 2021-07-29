@@ -1,5 +1,7 @@
 # OpenVR Space Calibrator
 
+This fork adds the ability to use grip in order to align your play spaces with space drag while in edit mode, Ideal when using an HMD without it's original controllers.
+
 This helps you use tracked VR devices from one company with any other. It aligns multiple tracking systems with a quick calibration step. It may not work for your setup, but there are many cases that work to a degree, and some work very well.
 
 - Rift CV1 x Vive devices: works very well with the v2 (blue logo) trackers, v1 trackers (grey logo, not in production) have major interference issues in the IR spectrum, controller wands (both gen) and Index controllers work very well.
