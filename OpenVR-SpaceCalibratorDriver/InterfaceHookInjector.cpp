@@ -18,7 +18,7 @@ static void DetourTrackedDevicePoseUpdated005(vr::IVRServerDriverHost *_this, ui
 {
 	//TRACE("ServerTrackedDeviceProvider::DetourTrackedDevicePoseUpdated(%d)", unWhichDevice);
 	auto pose = newPose;
-	Driver->SendPose(unWhichDevice, pose);
+	Driver->SetPose(unWhichDevice, pose);
 	if (Driver->HandleDevicePoseUpdated(unWhichDevice, pose))
 	{
 		TrackedDevicePoseUpdatedHook005.originalFunc(_this, unWhichDevice, pose, unPoseStructSize);
@@ -29,7 +29,7 @@ static void DetourTrackedDevicePoseUpdated006(vr::IVRServerDriverHost *_this, ui
 {
 	//TRACE("ServerTrackedDeviceProvider::DetourTrackedDevicePoseUpdated(%d)", unWhichDevice);
 	auto pose = newPose;
-	Driver->SendPose(unWhichDevice, pose);
+	Driver->SetPose(unWhichDevice, pose);
 	if (Driver->HandleDevicePoseUpdated(unWhichDevice, pose))
 	{
 		TrackedDevicePoseUpdatedHook006.originalFunc(_this, unWhichDevice, pose, unPoseStructSize);

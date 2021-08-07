@@ -19,6 +19,7 @@ namespace protocol
 		RequestInvalid,
 		RequestHandshake,
 		RequestSetDeviceTransform,
+		RequestGetDevicePoses,
 	};
 
 	enum ResponseType
@@ -26,6 +27,7 @@ namespace protocol
 		ResponseInvalid,
 		ResponseHandshake,
 		ResponseSuccess,
+		ResponseDevicePoses,
 	};
 
 	struct Protocol
@@ -67,12 +69,33 @@ namespace protocol
 		Request(RequestType type) : type(type) { }
 	};
 
+	struct DevicePoses
+	{
+		struct DevicePose
+		{
+			uint32_t openVRID;
+
+			vr::HmdQuaternion_t qWorldFromDriverRotation;
+			double vecWorldFromDriverTranslation[3];
+
+			vr::HmdQuaternion_t qDriverFromHeadRotation;
+			double vecDriverFromHeadTranslation[3];
+
+			double vecPosition[3];
+			vr::HmdQuaternion_t qRotation;
+		};
+
+		uint32_t length;
+		DevicePose devicePoses[8];
+	};
+
 	struct Response
 	{
 		ResponseType type;
 
 		union {
 			Protocol protocol;
+			DevicePoses devicePoses;
 		};
 
 		Response() : type(ResponseInvalid) { }

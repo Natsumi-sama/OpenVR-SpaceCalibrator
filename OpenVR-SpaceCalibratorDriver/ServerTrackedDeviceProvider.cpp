@@ -14,7 +14,6 @@ vr::EVRInitError ServerTrackedDeviceProvider::Init(vr::IVRDriverContext *pDriver
 
 	InjectHooks(this, pDriverContext);
 	server.Run();
-	client.Connect();
 
 	return vr::VRInitError_None;
 }
@@ -70,31 +69,35 @@ bool ServerTrackedDeviceProvider::HandleDevicePoseUpdated(uint32_t openVRID, vr:
 	return true;
 }
 
-void ServerTrackedDeviceProvider::SendPose(uint32_t openVRID, vr::DriverPose_t& pose)
+void ServerTrackedDeviceProvider::SetPose(uint32_t openVRID, vr::DriverPose_t& pose)
 {
-	std::stringstream str;
-	str << openVRID << ',';
-	str << pose.vecPosition[0] << ',';
-	str << pose.vecPosition[1] << ',';
-	str << pose.vecPosition[2] << ',';
-	str << pose.qRotation.x << ',';
-	str << pose.qRotation.y << ',';
-	str << pose.qRotation.z << ',';
-	str << pose.qRotation.w << ',';
-	str << pose.vecWorldFromDriverTranslation[0] << ',';
-	str << pose.vecWorldFromDriverTranslation[1] << ',';
-	str << pose.vecWorldFromDriverTranslation[2] << ',';
-	str << pose.qWorldFromDriverRotation.x << ',';
-	str << pose.qWorldFromDriverRotation.y << ',';
-	str << pose.qWorldFromDriverRotation.z << ',';
-	str << pose.qWorldFromDriverRotation.w << ',';
-	str << pose.vecDriverFromHeadTranslation[0] << ',';
-	str << pose.vecDriverFromHeadTranslation[1] << ',';
-	str << pose.vecDriverFromHeadTranslation[2] << ',';
-	str << pose.qDriverFromHeadRotation.x << ',';
-	str << pose.qDriverFromHeadRotation.y << ',';
-	str << pose.qDriverFromHeadRotation.z << ',';
-	str << pose.qDriverFromHeadRotation.w << ',';
+	if (pose.poseIsValid) devicePoses[openVRID] = pose;
+}
 
-	client.Send(str.str());
+protocol::DevicePoses ServerTrackedDeviceProvider::GetDevicePoses()
+{
+	protocol::DevicePoses poses;
+	uint32_t i = 0;
+	for (std::pair<uint32_t, vr::DriverPose_t> p : devicePoses)
+	{
+		protocol::DevicePoses::DevicePose pose;
+		pose.openVRID = p.first;
+		vr::DriverPose_t devicePose = p.second;
+		pose.qWorldFromDriverRotation = devicePose.qWorldFromDriverRotation;
+		pose.vecWorldFromDriverTranslation[0] = devicePose.vecWorldFromDriverTranslation[0];
+		pose.vecWorldFromDriverTranslation[1] = devicePose.vecWorldFromDriverTranslation[1];
+		pose.vecWorldFromDriverTranslation[2] = devicePose.vecWorldFromDriverTranslation[2];
+		pose.qDriverFromHeadRotation = devicePose.qDriverFromHeadRotation;
+		pose.vecDriverFromHeadTranslation[0] = devicePose.vecDriverFromHeadTranslation[0];
+		pose.vecDriverFromHeadTranslation[1] = devicePose.vecDriverFromHeadTranslation[1];
+		pose.vecDriverFromHeadTranslation[2] = devicePose.vecDriverFromHeadTranslation[2];
+		pose.qRotation = devicePose.qRotation;
+		pose.vecPosition[0] = devicePose.vecPosition[0];
+		pose.vecPosition[1] = devicePose.vecPosition[1];
+		pose.vecPosition[2] = devicePose.vecPosition[2];
+		poses.devicePoses[i] = pose;
+		if (++i >= 8) break;
+	}
+	poses.length = i;
+	return poses;
 }

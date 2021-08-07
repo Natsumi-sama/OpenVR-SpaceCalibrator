@@ -39,9 +39,6 @@
     <ClInclude Include="InterfaceHookInjector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UdpClient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenVR-SpaceCalibratorDriver.cpp">
@@ -63,9 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InterfaceHookInjector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UdpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

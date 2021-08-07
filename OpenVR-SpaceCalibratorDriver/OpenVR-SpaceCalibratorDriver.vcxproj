@@ -96,7 +96,6 @@
     <ClInclude Include="Logging.h" />
     <ClInclude Include="OpenVR-SpaceCalibratorDriver.h" />
     <ClInclude Include="ServerTrackedDeviceProvider.h" />
-    <ClInclude Include="UdpClient.h" />
     <ClInclude Include="VRWatchdogProvider.h" />
   </ItemGroup>
   <ItemGroup>
@@ -114,7 +113,6 @@
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="OpenVR-SpaceCalibratorDriver.cpp" />
     <ClCompile Include="ServerTrackedDeviceProvider.cpp" />
-    <ClCompile Include="UdpClient.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

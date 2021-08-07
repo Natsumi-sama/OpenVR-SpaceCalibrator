@@ -38,3 +38,11 @@ void ResetAndDisableDeviceTransform(uint32_t id)
 	req.setDeviceTransform = { id, false, zeroV, zeroQ };
 	Driver.SendBlocking(req);
 }
+
+protocol::DevicePoses GetDevicePoses()
+{
+	protocol::Request req(protocol::RequestGetDevicePoses);
+	protocol::Response res = Driver.SendBlocking(req);
+	return res.devicePoses;
+}
+
