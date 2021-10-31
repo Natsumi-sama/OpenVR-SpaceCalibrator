@@ -21,6 +21,7 @@ struct CalibrationContext
 
 	Eigen::Vector3d calibratedRotation;
 	Eigen::Vector3d calibratedTranslation;
+	double calibratedScale;
 
 	std::string referenceTrackingSystem;
 	std::string targetTrackingSystem;
@@ -58,6 +59,7 @@ struct CalibrationContext
 
 		calibratedRotation = Eigen::Vector3d();
 		calibratedTranslation = Eigen::Vector3d();
+		calibratedScale = 1.0;
 		referenceTrackingSystem = "";
 		targetTrackingSystem = "";
 		enabled = false;
