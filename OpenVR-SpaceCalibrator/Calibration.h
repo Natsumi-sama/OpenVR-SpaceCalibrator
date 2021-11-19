@@ -34,7 +34,8 @@ struct CalibrationContext
 	{
 		FAST = 0,
 		SLOW = 1,
-		VERY_SLOW = 2
+		VERY_SLOW = 2,
+		ULTRA_SLOW = 3
 	};
 	Speed calibrationSpeed = FAST;
 
@@ -75,6 +76,8 @@ struct CalibrationContext
 			return 250;
 		case VERY_SLOW:
 			return 500;
+		case ULTRA_SLOW:
+			return 1000;
 		}
 		return 100;
 	}
