@@ -138,7 +138,7 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Text("");
 		auto speed = CalCtx.calibrationSpeed;
 
-		ImGui::Columns(4, NULL, false);
+		ImGui::Columns(5, NULL, false);
 		ImGui::Text("Calibration Speed");
 
 		ImGui::NextColumn();
@@ -152,6 +152,10 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::NextColumn();
 		if (ImGui::RadioButton(" Very Slow     ", speed == CalibrationContext::VERY_SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::VERY_SLOW;
+
+		ImGui::NextColumn();
+		if (ImGui::RadioButton(" Ultra Slow     ", speed == CalibrationContext::ULTRA_SLOW))
+			CalCtx.calibrationSpeed = CalibrationContext::ULTRA_SLOW;
 
 		ImGui::Columns(1);
 	}
@@ -172,7 +176,7 @@ void BuildMenu(bool runningInOverlay)
 
 	ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
 	ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
-	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax");
+	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker");
 	if (runningInOverlay)
 	{
 		ImGui::SameLine();
@@ -308,6 +312,7 @@ std::string LabelString(const VRDevice &device)
 		label = "HMD";
 	else if (device.deviceClass == vr::TrackedDeviceClass_GenericTracker)
 		label = "Tracker";*/
+	//Customizar aqui, aprender como criar um nickname
 
 	AppendSeparated(label, device.model);
 	AppendSeparated(label, device.serial);
