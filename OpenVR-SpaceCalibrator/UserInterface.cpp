@@ -138,7 +138,7 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Text("");
 		auto speed = CalCtx.calibrationSpeed;
 
-		ImGui::Columns(4, NULL, false);
+		ImGui::Columns(5, NULL, false);
 		ImGui::Text("Calibration Speed");
 
 		ImGui::NextColumn();
@@ -152,6 +152,10 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::NextColumn();
 		if (ImGui::RadioButton(" Very Slow     ", speed == CalibrationContext::VERY_SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::VERY_SLOW;
+
+		ImGui::NextColumn();
+		if (ImGui::RadioButton(" Ultr Slow     ", speed == CalibrationContext::ULTRASLOW))
+			CalCtx.calibrationSpeed = CalibrationContext::ULTRASLOW;
 
 		ImGui::Columns(1);
 	}
@@ -172,7 +176,7 @@ void BuildMenu(bool runningInOverlay)
 
 	ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
 	ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
-	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax");
+	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, hacked by dosker");
 	if (runningInOverlay)
 	{
 		ImGui::SameLine();
