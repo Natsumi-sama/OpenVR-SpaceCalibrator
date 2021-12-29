@@ -165,6 +165,8 @@ void BuildMenu(bool runningInOverlay)
 			TextWithWidth("Manual Calibration Speed", "Type the number of samples:", width);
 			ImGui::InputInt("##Samples", &CalCtx.ManualSamples, 1, 10);
 			ImGui::PopItemWidth();
+			if (CalCtx.ManualSamples > 1000) CalCtx.ManualSamples = 1;
+			else if (CalCtx.ManualSamples < 1) CalCtx.ManualSamples = 1000;
 		}
 	}
 	else if (CalCtx.state == CalibrationState::Editing)

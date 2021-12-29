@@ -444,7 +444,7 @@ void CalibrationTick(double time)
 		ctx.state = CalibrationState::Rotation;
 		ctx.wantedUpdateInterval = 0.0;
 
-		snprintf(buf, sizeof buf, "Starting calibration with %d samples...\n", CalCtx.SampleCount());
+		snprintf(buf, sizeof buf, "Starting calibration with %d samples...\n", (int) CalCtx.SampleCount());
 		CalCtx.Log(buf);
 		return;
 	}
