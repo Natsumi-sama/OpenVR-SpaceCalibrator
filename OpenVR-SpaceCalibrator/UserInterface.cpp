@@ -142,6 +142,10 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Text("Calibration Speed");
 
 		ImGui::NextColumn();
+		if (ImGui::RadioButton(" Manual (below)", speed == CalibrationContext::MANUAL))
+			CalCtx.calibrationSpeed = CalibrationContext::MANUAL;
+
+		ImGui::NextColumn();
 		if (ImGui::RadioButton(" Fast (100)    ", speed == CalibrationContext::FAST))
 			CalCtx.calibrationSpeed = CalibrationContext::FAST;
 
@@ -153,21 +157,20 @@ void BuildMenu(bool runningInOverlay)
 		if (ImGui::RadioButton(" Very Slow(500)", speed == CalibrationContext::VERY_SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::VERY_SLOW;
 
-		ImGui::NextColumn();
-
-		if (ImGui::RadioButton(" Manual (below)", speed == CalibrationContext::MANUAL))
-			CalCtx.calibrationSpeed = CalibrationContext::MANUAL;
 
 		ImGui::Columns(1);
 
 		if (CalCtx.calibrationSpeed == CalibrationContext::MANUAL)
 		{
-			TextWithWidth("Manual Calibration Speed", "Type the number of samples:", width);
+			float widthF = width / 3.0f - style.FramePadding.x - style.FramePadding.x;
+			ImGui::PushItemWidth(widthF);
+			TextWithWidth("Manual Calibration Speed", "Type the number of samples: (higher = slower)", width);
 			ImGui::InputInt("##Samples", &CalCtx.ManualSamples, 1, 10);
 			ImGui::PopItemWidth();
 			if (CalCtx.ManualSamples > 1000) CalCtx.ManualSamples = 1;
 			else if (CalCtx.ManualSamples < 1) CalCtx.ManualSamples = 1000;
 		}
+
 	}
 	else if (CalCtx.state == CalibrationState::Editing)
 	{
@@ -178,6 +181,7 @@ void BuildMenu(bool runningInOverlay)
 			SaveProfile(CalCtx);
 			CalCtx.state = CalibrationState::None;
 		}
+
 	}
 	else
 	{
@@ -213,7 +217,7 @@ void BuildMenu(bool runningInOverlay)
 				ImGui::Text("");
 				ImGui::ProgressBar(fraction, ImVec2(-1.0f, 0.0f), "");
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetFontSize() - style.FramePadding.y * 2);
-				ImGui::Text(" %d%%", (int)(fraction * 100));
+				ImGui::Text(" %04d/%04d - %03d%%", message.progress, message.target, (int)(fraction * 100));
 				break;
 			}
 		}
@@ -313,6 +317,14 @@ void AppendSeparated(std::string &buffer, const std::string &suffix)
 std::string LabelString(const VRDevice &device)
 {
 	std::string label;
+	std::string nickname;
+
+	if (device.serial == CalCtx.nickname_HIP_TRACKER)//Hip tracker
+		nickname = "HIP tracker";
+	else if (device.serial == CalCtx.nickname_LEFT_FOOT_TRACKER)//Tracker do pe esquerdo
+		nickname = "Left <- Foot tracker";
+	else if (device.serial == CalCtx.nickname_RIGHT_FOOT_TRACKER)//Tracker do pe direito
+		nickname = "Right -> Foot tracker";
 
 	/*if (device.controllerRole == vr::TrackedControllerRole_LeftHand)
 		label = "Left Controller";
@@ -324,10 +336,10 @@ std::string LabelString(const VRDevice &device)
 		label = "HMD";
 	else if (device.deviceClass == vr::TrackedDeviceClass_GenericTracker)
 		label = "Tracker";*/
-	//Customizar aqui, aprender como criar um nickname
 
 	AppendSeparated(label, device.model);
 	AppendSeparated(label, device.serial);
+	if (nickname != "") AppendSeparated(label, nickname);
 	return label;
 }
 
@@ -510,6 +522,32 @@ void BuildProfileEditor()
 
 	ImGui::InputDouble("##Scale", &CalCtx.calibratedScale, 0.0001, 0.01, "%.8f");
 	ImGui::PopItemWidth();
+
+	ImGui::NewLine();
+
+	char buf[30];
+	strcpy_s(buf, CalCtx.nickname_HIP_TRACKER.c_str());
+	TextWithWidth("HIP_Label", "Hip Tracker serial", width);
+	ImGui::SameLine();
+	TextWithWidth("LFT_Label", "Left foot Tracker serial", width);
+	ImGui::SameLine();
+	TextWithWidth("RFT_Label", "Right foot Tracker serial", width);
+
+	ImGui::PushItemWidth(widthF);
+	ImGui::InputText("##HIP_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::SameLine();
+	CalCtx.nickname_HIP_TRACKER = buf;
+
+	strcpy_s(buf, CalCtx.nickname_LEFT_FOOT_TRACKER.c_str());
+	ImGui::InputText("##LF_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::SameLine();
+	CalCtx.nickname_LEFT_FOOT_TRACKER = buf;
+
+	strcpy_s(buf, CalCtx.nickname_RIGHT_FOOT_TRACKER.c_str());
+	ImGui::InputText("##RF_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::PopItemWidth();
+	CalCtx.nickname_RIGHT_FOOT_TRACKER = buf;
+	TextWithWidth("Tracker_Labels", "Type the serial to attach a nickname to the tracker, leave empty to remove", ImGui::GetWindowContentRegionWidth());
 }
 
 void TextWithWidth(const char *label, const char *text, float width)

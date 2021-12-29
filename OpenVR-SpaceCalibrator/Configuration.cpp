@@ -65,6 +65,13 @@ static void ParseProfile(CalibrationContext &ctx, std::istream &stream)
 	if (obj["manual_speed"].is<double>())
 		ctx.ManualSamples = (int)obj["manual_speed"].get<double>();
 
+	if (obj["hip_nickname"].is<std::string>())
+		ctx.nickname_HIP_TRACKER = obj["hip_nickname"].get<std::string>();
+	if (obj["rft_nickname"].is<std::string>())
+		ctx.nickname_RIGHT_FOOT_TRACKER = obj["rft_nickname"].get<std::string>();
+	if (obj["lft_nickname"].is<std::string>())
+		ctx.nickname_LEFT_FOOT_TRACKER = obj["lft_nickname"].get<std::string>();
+
 	if (obj["chaperone"].is<picojson::object>())
 	{
 		auto chaperone = obj["chaperone"].get<picojson::object>();
@@ -116,6 +123,10 @@ static void WriteProfile(CalibrationContext &ctx, std::ostream &out)
 
 	speed = ctx.ManualSamples;
 	profile["manual_speed"].set<double>(speed);
+
+	profile["hip_nickname"].set<std::string>(ctx.nickname_HIP_TRACKER);
+	profile["rft_nickname"].set<std::string>(ctx.nickname_RIGHT_FOOT_TRACKER);
+	profile["lft_nickname"].set<std::string>(ctx.nickname_LEFT_FOOT_TRACKER);
 
 	if (ctx.chaperone.valid)
 	{

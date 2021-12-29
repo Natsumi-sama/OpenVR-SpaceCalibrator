@@ -25,6 +25,10 @@ struct CalibrationContext
 	std::string referenceTrackingSystem;
 	std::string targetTrackingSystem;
 
+	std::string nickname_HIP_TRACKER;
+	std::string nickname_RIGHT_FOOT_TRACKER;
+	std::string nickname_LEFT_FOOT_TRACKER;
+
 	bool enabled = false;
 	bool validProfile = false;
 	double timeLastTick = 0, timeLastScan = 0;
