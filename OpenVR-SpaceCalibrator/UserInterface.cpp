@@ -142,23 +142,30 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Text("Calibration Speed");
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Fast          ", speed == CalibrationContext::FAST))
+		if (ImGui::RadioButton(" Fast (100)    ", speed == CalibrationContext::FAST))
 			CalCtx.calibrationSpeed = CalibrationContext::FAST;
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Slow          ", speed == CalibrationContext::SLOW))
+		if (ImGui::RadioButton(" Slow (250)    ", speed == CalibrationContext::SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::SLOW;
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Very Slow     ", speed == CalibrationContext::VERY_SLOW))
+		if (ImGui::RadioButton(" Very Slow(500)", speed == CalibrationContext::VERY_SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::VERY_SLOW;
 
 		ImGui::NextColumn();
 
-		if (ImGui::RadioButton(" Ultra Slow     ", speed == CalibrationContext::ULTRA_SLOW))
-			CalCtx.calibrationSpeed = CalibrationContext::ULTRA_SLOW;
+		if (ImGui::RadioButton(" Manual (below)", speed == CalibrationContext::MANUAL))
+			CalCtx.calibrationSpeed = CalibrationContext::MANUAL;
 
 		ImGui::Columns(1);
+
+		if (CalCtx.calibrationSpeed == CalibrationContext::MANUAL)
+		{
+			TextWithWidth("Manual Calibration Speed", "Type the number of samples:", width);
+			ImGui::InputInt("##Samples", &CalCtx.ManualSamples, 1, 10);
+			ImGui::PopItemWidth();
+		}
 	}
 	else if (CalCtx.state == CalibrationState::Editing)
 	{

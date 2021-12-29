@@ -35,9 +35,10 @@ struct CalibrationContext
 		FAST = 0,
 		SLOW = 1,
 		VERY_SLOW = 2,
-		ULTRASLOW = 3
+		MANUAL = 3
 	};
-	Speed calibrationSpeed = ULTRASLOW;
+	Speed calibrationSpeed = SLOW;
+	int ManualSamples = 375;
 
 	vr::TrackedDevicePose_t devicePoses[vr::k_unMaxTrackedDeviceCount];
 
@@ -76,8 +77,8 @@ struct CalibrationContext
 			return 250;
 		case VERY_SLOW:
 			return 500;
-		case ULTRASLOW:
-			return 750;
+		case MANUAL:
+			return ManualSamples;
 		}
 		return 100;
 	}

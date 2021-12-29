@@ -160,7 +160,7 @@ Eigen::Vector3d CalibrateRotation(const std::vector<Sample> &samples)
 }
 
 Eigen::Vector3d CalibrateTranslation(const std::vector<Sample> &samples)
-{
+{//Real calibração acontece aqui
 	std::vector<std::pair<Eigen::Vector3d, Eigen::Matrix3d>> deltas;
 
 	for (size_t i = 0; i < samples.size(); i++)
@@ -444,7 +444,8 @@ void CalibrationTick(double time)
 		ctx.state = CalibrationState::Rotation;
 		ctx.wantedUpdateInterval = 0.0;
 
-		CalCtx.Log("Starting calibration...\n");
+		snprintf(buf, sizeof buf, "Starting calibration with %d samples...\n", CalCtx.SampleCount());
+		CalCtx.Log(buf);
 		return;
 	}
 
