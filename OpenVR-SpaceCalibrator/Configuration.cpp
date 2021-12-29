@@ -62,6 +62,9 @@ static void ParseProfile(CalibrationContext &ctx, std::istream &stream)
 	if (obj["calibration_speed"].is<double>())
 		ctx.calibrationSpeed = (CalibrationContext::Speed)(int) obj["calibration_speed"].get<double>();
 
+	if (obj["manual_speed"].is<double>())
+		ctx.ManualSamples = (int)obj["manual_speed"].get<double>();
+
 	if (obj["chaperone"].is<picojson::object>())
 	{
 		auto chaperone = obj["chaperone"].get<picojson::object>();
@@ -110,6 +113,9 @@ static void WriteProfile(CalibrationContext &ctx, std::ostream &out)
 
 	double speed = (int) ctx.calibrationSpeed;
 	profile["calibration_speed"].set<double>(speed);
+
+	speed = ctx.ManualSamples;
+	profile["manual_speed"].set<double>(speed);
 
 	if (ctx.chaperone.valid)
 	{

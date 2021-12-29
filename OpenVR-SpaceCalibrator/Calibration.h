@@ -37,7 +37,7 @@ struct CalibrationContext
 		VERY_SLOW = 2,
 		MANUAL = 3
 	};
-	Speed calibrationSpeed = SLOW;
+	Speed calibrationSpeed = FAST;
 	int ManualSamples = 375;
 
 	vr::TrackedDevicePose_t devicePoses[vr::k_unMaxTrackedDeviceCount];
@@ -65,6 +65,9 @@ struct CalibrationContext
 		targetTrackingSystem = "";
 		enabled = false;
 		validProfile = false;
+
+		calibrationSpeed = FAST;
+		ManualSamples = 375;
 	}
 
 	size_t SampleCount()
