@@ -188,10 +188,43 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Button("Calibration in progress...", ImVec2(ImGui::GetWindowContentRegionWidth(), ImGui::GetTextLineHeight() * 2));
 	}
 
-	ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
-	ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
-
-	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker");
+	bool ok = true;
+	if (CalCtx.referenceID == -1)
+	{
+		//CalCtx.Log("Missing reference device\n"); 
+		ok = false;
+	}
+	else if (CalCtx.targetID == -1)
+	{//CalCtx.Log("Missing reference device\n"); 
+		ok = false;
+	}
+	else if (!CalCtx.devicePoses[CalCtx.referenceID].bPoseIsValid)
+	{//CalCtx.Log("Reference device is not tracking\n"); 
+		ok = false;
+	}
+	else if (!CalCtx.devicePoses[CalCtx.targetID].bPoseIsValid)
+	{//CalCtx.Log("Target device is not tracking\n"); 
+		ok = false;
+	}
+	if (ok && CalCtx.state == CalibrationState::None)
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing() * 4.25f));
+		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 4), true);
+		ImGui::Text("Reference (%d) %s,											Target (%d) %s\nRot:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nTra:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>\nOpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker",
+			CalCtx.referenceID, CalCtx.referenceTrackingSystem, CalCtx.targetID, CalCtx.targetTrackingSystem,
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][3],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][3],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][2],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][2],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][1],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][1]);
+	}
+	else
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
+		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
+		ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker");
+	}
 
 	if (runningInOverlay)
 	{
