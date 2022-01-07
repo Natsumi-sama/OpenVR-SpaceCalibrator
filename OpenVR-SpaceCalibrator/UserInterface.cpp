@@ -208,16 +208,18 @@ void BuildMenu(bool runningInOverlay)
 	}
 	if (ok && CalCtx.state == CalibrationState::None)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing() * 4.25f));
-		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 4), true);
-		ImGui::Text("Reference (%d) %s,											Target (%d) %s\nRot:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nTra:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>\nOpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker",
+		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing() * 4.75f));
+		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 4.5), true);
+		ImGui::Text("Reference (%d) %s,											Target (%d) %s\nRot:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nTra:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>\nOpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker",
 			CalCtx.referenceID, CalCtx.referenceTrackingSystem, CalCtx.targetID, CalCtx.targetTrackingSystem,
 			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][3],
 			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][3],
 			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][2],
 			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][2],
 			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][1],
-			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][1]);
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][1],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][0], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][0], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][0],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][0], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][0], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][0]);
 	}
 	else
 	{
