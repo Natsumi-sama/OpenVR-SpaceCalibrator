@@ -159,13 +159,13 @@ Eigen::Vector3d CalibrateRotation(const std::vector<Sample> &samples)
 
 	Eigen::Vector3d euler = rot.eulerAngles(2, 1, 0) * 180.0 / EIGEN_PI;
 
-	snprintf(buf, sizeof buf, "Calibrated rotation: yaw=%.2f pitch=%.2f roll=%.2f\n", euler[1], euler[2], euler[0]);
+	snprintf(buf, sizeof buf, "Calibrated rotation: yaw=%.2f pitch=%.2f roll=%.2f\nNow the translation...", euler[1], euler[2], euler[0]);
 	CalCtx.Log(buf);
 	return euler;
 }
 
 Eigen::Vector3d CalibrateTranslation(const std::vector<Sample> &samples)
-{
+{//Real calibração acontece aqui
 	std::vector<std::pair<Eigen::Vector3d, Eigen::Matrix3d>> deltas;
 
 	for (size_t i = 0; i < samples.size(); i++)
@@ -500,7 +500,8 @@ void CalibrationTick(double time)
 		ctx.state = CalibrationState::Rotation;
 		ctx.wantedUpdateInterval = 0.0;
 
-		CalCtx.Log("Starting calibration...\n");
+		snprintf(buf, sizeof buf, "Starting calibration with %d samples...\nRotation first...\n", (int) CalCtx.SampleCount());
+		CalCtx.Log(buf);
 		return;
 	}
 

@@ -138,22 +138,39 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Text("");
 		auto speed = CalCtx.calibrationSpeed;
 
-		ImGui::Columns(4, NULL, false);
+		ImGui::Columns(5, NULL, false);
 		ImGui::Text("Calibration Speed");
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Fast          ", speed == CalibrationContext::FAST))
+		if (ImGui::RadioButton(" Manual (below)", speed == CalibrationContext::MANUAL))
+			CalCtx.calibrationSpeed = CalibrationContext::MANUAL;
+
+		ImGui::NextColumn();
+		if (ImGui::RadioButton(" Fast (100)    ", speed == CalibrationContext::FAST))
 			CalCtx.calibrationSpeed = CalibrationContext::FAST;
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Slow          ", speed == CalibrationContext::SLOW))
+		if (ImGui::RadioButton(" Slow (250)    ", speed == CalibrationContext::SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::SLOW;
 
 		ImGui::NextColumn();
-		if (ImGui::RadioButton(" Very Slow     ", speed == CalibrationContext::VERY_SLOW))
+		if (ImGui::RadioButton(" Very Slow(500)", speed == CalibrationContext::VERY_SLOW))
 			CalCtx.calibrationSpeed = CalibrationContext::VERY_SLOW;
 
+
 		ImGui::Columns(1);
+
+		if (CalCtx.calibrationSpeed == CalibrationContext::MANUAL)
+		{
+			float widthF = width / 3.0f - style.FramePadding.x - style.FramePadding.x;
+			ImGui::PushItemWidth(widthF);
+			TextWithWidth("Manual Calibration Speed", "Type the number of samples: (higher = slower)", width);
+			ImGui::InputInt("##Samples", &CalCtx.ManualSamples, 1, 10);
+			ImGui::PopItemWidth();
+			if (CalCtx.ManualSamples > 1000) CalCtx.ManualSamples = 1;
+			else if (CalCtx.ManualSamples < 1) CalCtx.ManualSamples = 1000;
+		}
+
 	}
 	else if (CalCtx.state == CalibrationState::Editing || CalCtx.state == CalibrationState::Referencing)
 	{
@@ -180,9 +197,46 @@ void BuildMenu(bool runningInOverlay)
 		ImGui::Button("Calibration in progress...", ImVec2(ImGui::GetWindowContentRegionWidth(), ImGui::GetTextLineHeight() * 2));
 	}
 
-	ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
-	ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
-	ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax");
+	bool ok = true;
+	if (CalCtx.referenceID == -1)
+	{
+		//CalCtx.Log("Missing reference device\n"); 
+		ok = false;
+	}
+	else if (CalCtx.targetID == -1)
+	{//CalCtx.Log("Missing reference device\n"); 
+		ok = false;
+	}
+	else if (!CalCtx.devicePoses[CalCtx.referenceID].bPoseIsValid)
+	{//CalCtx.Log("Reference device is not tracking\n"); 
+		ok = false;
+	}
+	else if (!CalCtx.devicePoses[CalCtx.targetID].bPoseIsValid)
+	{//CalCtx.Log("Target device is not tracking\n"); 
+		ok = false;
+	}
+	if (ok && CalCtx.state == CalibrationState::None)
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing() * 4.75f));
+		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 4.5), true);
+		ImGui::Text("Reference (%d) %s,											Target (%d) %s\nRot:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nTra:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>	\nUnk:	<%.8f, %.8f, %.8f>		<%.8f, %.8f, %.8f>\nOpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker",
+			CalCtx.referenceID, CalCtx.referenceTrackingSystem, CalCtx.targetID, CalCtx.targetTrackingSystem,
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][3],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][3], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][3],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][2],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][2], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][2],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][1],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][1], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][1],
+			CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[0][0], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[1][0], CalCtx.devicePoses[CalCtx.referenceID].mDeviceToAbsoluteTracking.m[2][0],
+			CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[0][0], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[1][0], CalCtx.devicePoses[CalCtx.targetID].mDeviceToAbsoluteTracking.m[2][0]);
+	}
+	else
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, ImGui::GetWindowHeight() - ImGui::GetItemsLineHeightWithSpacing()));
+		ImGui::BeginChild("bottom line", ImVec2(ImGui::GetWindowWidth() - 20.0f, ImGui::GetItemsLineHeightWithSpacing() * 2), false);
+		ImGui::Text("OpenVR Space Calibrator v" SPACECAL_VERSION_STRING " - by tach/pushrax, customized by Dosker");
+	}
+
 	if (runningInOverlay)
 	{
 		ImGui::SameLine();
@@ -207,7 +261,7 @@ void BuildMenu(bool runningInOverlay)
 				ImGui::Text("");
 				ImGui::ProgressBar(fraction, ImVec2(-1.0f, 0.0f), "");
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetFontSize() - style.FramePadding.y * 2);
-				ImGui::Text(" %d%%", (int)(fraction * 100));
+				ImGui::Text(" %04d/%04d - %03d%%", message.progress, message.target, (int)(fraction * 100));
 				break;
 			}
 		}
@@ -307,6 +361,14 @@ void AppendSeparated(std::string &buffer, const std::string &suffix)
 std::string LabelString(const VRDevice &device)
 {
 	std::string label;
+	std::string nickname;
+
+	if (device.serial == CalCtx.nickname_HIP_TRACKER)//Hip tracker
+		nickname = "HIP tracker";
+	else if (device.serial == CalCtx.nickname_LEFT_FOOT_TRACKER)//Tracker do pe esquerdo
+		nickname = "Left <- Foot tracker";
+	else if (device.serial == CalCtx.nickname_RIGHT_FOOT_TRACKER)//Tracker do pe direito
+		nickname = "Right -> Foot tracker";
 
 	/*if (device.controllerRole == vr::TrackedControllerRole_LeftHand)
 		label = "Left Controller";
@@ -321,6 +383,7 @@ std::string LabelString(const VRDevice &device)
 
 	AppendSeparated(label, device.model);
 	AppendSeparated(label, device.serial);
+	if (nickname != "") AppendSeparated(label, nickname);
 	return label;
 }
 
@@ -503,6 +566,32 @@ void BuildProfileEditor()
 
 	ImGui::InputDouble("##Scale", &CalCtx.calibratedScale, 0.0001, 0.01, "%.8f");
 	ImGui::PopItemWidth();
+
+	ImGui::NewLine();
+
+	char buf[30];
+	strcpy_s(buf, CalCtx.nickname_HIP_TRACKER.c_str());
+	TextWithWidth("HIP_Label", "Hip Tracker serial", width);
+	ImGui::SameLine();
+	TextWithWidth("LFT_Label", "Left foot Tracker serial", width);
+	ImGui::SameLine();
+	TextWithWidth("RFT_Label", "Right foot Tracker serial", width);
+
+	ImGui::PushItemWidth(widthF);
+	ImGui::InputText("##HIP_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::SameLine();
+	CalCtx.nickname_HIP_TRACKER = buf;
+
+	strcpy_s(buf, CalCtx.nickname_LEFT_FOOT_TRACKER.c_str());
+	ImGui::InputText("##LF_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::SameLine();
+	CalCtx.nickname_LEFT_FOOT_TRACKER = buf;
+
+	strcpy_s(buf, CalCtx.nickname_RIGHT_FOOT_TRACKER.c_str());
+	ImGui::InputText("##RF_TRACKER", buf, IM_ARRAYSIZE(buf));
+	ImGui::PopItemWidth();
+	CalCtx.nickname_RIGHT_FOOT_TRACKER = buf;
+	TextWithWidth("Tracker_Labels", "Type the serial to attach a nickname to the tracker, leave empty to remove", ImGui::GetWindowContentRegionWidth());
 }
 
 void TextWithWidth(const char *label, const char *text, float width)

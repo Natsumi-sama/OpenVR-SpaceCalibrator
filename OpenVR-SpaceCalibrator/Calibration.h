@@ -26,6 +26,10 @@ struct CalibrationContext
 	std::string referenceTrackingSystem;
 	std::string targetTrackingSystem;
 
+	std::string nickname_HIP_TRACKER;
+	std::string nickname_RIGHT_FOOT_TRACKER;
+	std::string nickname_LEFT_FOOT_TRACKER;
+
 	bool enabled = false;
 	bool validProfile = false;
 	double timeLastTick = 0, timeLastScan = 0;
@@ -35,9 +39,11 @@ struct CalibrationContext
 	{
 		FAST = 0,
 		SLOW = 1,
-		VERY_SLOW = 2
+		VERY_SLOW = 2,
+		MANUAL = 3
 	};
 	Speed calibrationSpeed = FAST;
+	int ManualSamples = 375;
 
 	vr::TrackedDevicePose_t devicePoses[vr::k_unMaxTrackedDeviceCount];
 
@@ -64,6 +70,9 @@ struct CalibrationContext
 		targetTrackingSystem = "";
 		enabled = false;
 		validProfile = false;
+
+		calibrationSpeed = FAST;
+		ManualSamples = 375;
 	}
 
 	size_t SampleCount()
@@ -76,6 +85,8 @@ struct CalibrationContext
 			return 250;
 		case VERY_SLOW:
 			return 500;
+		case MANUAL:
+			return ManualSamples;
 		}
 		return 100;
 	}
