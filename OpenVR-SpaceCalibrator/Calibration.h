@@ -18,6 +18,7 @@ enum class CalibrationState
 	Editing,
 	Continuous,
 	ContinuousStandby,
+	Referencing
 };
 
 struct StandbyDevice {
@@ -212,6 +213,7 @@ void StartContinuousCalibration();
 void EndContinuousCalibration();
 void LoadChaperoneBounds();
 void ApplyChaperoneBounds();
+void SetReferenceOffset();
 
 void PushCalibrationApplyTime();
 void ShowCalibrationDebug(int r, int c);
