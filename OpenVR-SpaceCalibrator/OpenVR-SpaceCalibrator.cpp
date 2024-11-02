@@ -307,7 +307,7 @@ void RunLoop()
 			while (vr::VRSystem()->PollNextEvent(&event, sizeof(event))) {
 				if (event.eventType == vr::VREvent_ButtonPress || event.eventType == vr::VREvent_ButtonUnpress) {
 					vr::VRControllerState_t state;
-					vr::VRSystem()->GetControllerState(CalCtx.referenceID, &state, sizeof(state));
+					vr::VRSystem()->GetControllerState(CalCtx.targetID, &state, sizeof(state));
 					bool pushed = (state.ulButtonPressed & vr::ButtonMaskFromId(vr::EVRButtonId::k_EButton_Grip)) != 0;
 					
 					if (pushed) {

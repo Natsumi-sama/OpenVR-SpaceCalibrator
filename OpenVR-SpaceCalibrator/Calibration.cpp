@@ -412,9 +412,9 @@ void EndContinuousCalibration() {
 void SetReferenceOffset() {
 	auto &ctx = CalCtx;
 	Eigen::Vector3d pose(
-		ctx.devicePoses[ctx.referenceID].vecPosition[0],
-		ctx.devicePoses[ctx.referenceID].vecPosition[1],
-		ctx.devicePoses[ctx.referenceID].vecPosition[2]
+		ctx.devicePoses[ctx.targetID].vecPosition[0],
+		ctx.devicePoses[ctx.targetID].vecPosition[1],
+		ctx.devicePoses[ctx.targetID].vecPosition[2]
 	);
 	ReferencePose = pose;
 	ReferenceTranslation = ctx.calibratedTranslation;
@@ -504,9 +504,9 @@ void CalibrationTick(double time)
 	if (ctx.state == CalibrationState::Referencing)
 	{
 		Eigen::Vector3d pose(
-			ctx.devicePoses[ctx.referenceID].vecPosition[0],
-			ctx.devicePoses[ctx.referenceID].vecPosition[1],
-			ctx.devicePoses[ctx.referenceID].vecPosition[2]
+			ctx.devicePoses[ctx.targetID].vecPosition[0],
+			ctx.devicePoses[ctx.targetID].vecPosition[1],
+			ctx.devicePoses[ctx.targetID].vecPosition[2]
 		);
 		Eigen::Vector3d deltaTrans = pose - ReferencePose;
 		ctx.calibratedTranslation = (ReferenceTranslation + (deltaTrans * 30));
