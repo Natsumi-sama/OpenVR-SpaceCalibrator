@@ -49,14 +49,7 @@ namespace {
 		Eigen::Vector3d ref, target;
 	};
 
-    Pose ReferencePose;
-    struct Sample
-    {
-	    Pose ref, target;
-    	bool valid;
-	    Sample() : valid(false) { }
-	    Sample(Pose ref, Pose target) : valid(true), ref(ref), target(target) { }
-    };
+	Eigen::Vector3d ReferencePose;
 
 	bool StartsWith(const std::string& str, const std::string& prefix)
 	{
@@ -418,7 +411,11 @@ void EndContinuousCalibration() {
 
 void SetReferenceOffset() {
 	auto &ctx = CalCtx;
-	Pose pose(ctx.devicePoses[ctx.referenceID].mDeviceToAbsoluteTracking);
+	Eigen::Vector3d pose(
+		ctx.devicePoses[ctx.referenceID].vecPosition[0],
+		ctx.devicePoses[ctx.referenceID].vecPosition[1],
+		ctx.devicePoses[ctx.referenceID].vecPosition[2]
+	);
 	ReferencePose = pose;
 	ReferenceTranslation = ctx.calibratedTranslation;
 	ReferenceRotation = ctx.calibratedRotation;
@@ -506,9 +503,13 @@ void CalibrationTick(double time)
 
 	if (ctx.state == CalibrationState::Referencing)
 	{
-		Pose pose(ctx.devicePoses[ctx.referenceID].mDeviceToAbsoluteTracking);
-		Eigen::Vector3d deltaTrans = pose.trans - ReferencePose.trans;
-		ctx.calibratedTranslation = (ReferenceTranslation + (deltaTrans * 100));
+		Eigen::Vector3d pose(
+			ctx.devicePoses[ctx.referenceID].vecPosition[0],
+			ctx.devicePoses[ctx.referenceID].vecPosition[1],
+			ctx.devicePoses[ctx.referenceID].vecPosition[2]
+		);
+		Eigen::Vector3d deltaTrans = pose - ReferencePose;
+		ctx.calibratedTranslation = (ReferenceTranslation + (deltaTrans * 30));
 
 		// Attempt # 1, getting teh euler delta and adding it to the original reference rotation - does not work.
 		//auto rotation = pose.rot.eulerAngles(2, 1, 0) * 180.0 / EIGEN_PI;
@@ -536,9 +537,9 @@ void CalibrationTick(double time)
 		// Eigen::Matrix3d updatedRot = currentQuat.toRotationMatrix() + deltaRot;
 
 
-		ctx.wantedUpdateInterval = 0.025;
+		ctx.wantedUpdateInterval = 0.01;
 
-		if ((time - ctx.timeLastScan) >= 0.025)
+		if ((time - ctx.timeLastScan) >= 0.01)
 		{
 			ScanAndApplyProfile(ctx);
 			ctx.timeLastScan = time;
